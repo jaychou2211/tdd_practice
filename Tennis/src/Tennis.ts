@@ -1,43 +1,28 @@
-
+const POINTS = ["LOVE", "FIFTEEN", "THIRTY", "FORTY"];
 
 export class Tennis {
+    private players: Map<string, number> = new Map();
     constructor(
         private readonly player1: string,
         private readonly player2: string,
-        private score_P1: string = 'love',
-        private score_P2: string = 'love',
-    ) { }
-
-    getScoreOfPlayer(player: string) {
-        return player === this.player1 ? this.score_P1 : this.score_P2;
+    ) {
+        this.players.set(player1, 0);
+        this.players.set(player2, 0);
     }
 
-    setScoreOfPlayer(player: string, score: string) {
-        if (player === this.player1) {
-            this.score_P1 = score;
-        } else {
-            this.score_P2 = score;
-        }
+    setScoreOfPlayer(player: string, score: number) {
+        this.players.set(player, score);
     }
 
     winPoint(player: string) {
-        if (player === this.player1) {
-            if (this.score_P1 === 'love') {
-                this.score_P1 = '15';
-            } else if (this.score_P1 === '15') {
-                this.score_P1 = '30';
-            } else if (this.score_P1 === '30') {
-                this.score_P1 = '40';
-            }
-        } else {
-            if (this.score_P2 === 'love') {
-                this.score_P2 = '15';
-            } else if (this.score_P2 === '15') {
-                this.score_P2 = '30';
-            } else if (this.score_P2 === '30') {
-                this.score_P2 = '40';
-            }
-        }
+        const score = this.players.get(player);
+        this.setScoreOfPlayer(player, (score as number) + 1);
     }
 
+    getScore() {
+        const score1: number = this.players.get(this.player1) as number;
+        const score2: number = this.players.get(this.player2) as number;
+        if (score1 === score2 && score1 === 0) return "LOVE ALL";
+        return POINTS[score1] + "," + POINTS[score2];
+    }
 }
