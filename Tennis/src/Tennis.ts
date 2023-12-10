@@ -1,40 +1,67 @@
 const POINTS = ["LOVE", "FIFTEEN", "THIRTY", "FORTY"];
 
+type Player = {
+    name: string,
+    score: number
+}
+
 export class Tennis {
-    private players: Map<string, number> = new Map();
-    constructor(
-        player1: string,
-        player2: string,
-    ) {
-        this.players.set(player1, 0);
-        this.players.set(player2, 0);
+    private player1: Player;
+    private player2: Player;
+
+    constructor(name1: string, name2: string) {
+        this.player1 = { name: name1, score: 0 };
+        this.player2 = { name: name2, score: 0 };
     }
 
-    setScoreOfPlayer(player: string, score: number) {
-        this.players.set(player, score);
+    setScoreOfPlayer(name: string, score: number) {
+        this.findPlayer(name).score = score;
     }
 
-    winPoint(player: string) {
-        const score = this.players.get(player);
-        this.setScoreOfPlayer(player, (score as number) + 1);
+    winPoint(name: string) {
+        this.findPlayer(name).score += 1;
     }
 
     getScore() {
-        const [player1, player2] = [...this.players.keys()];
-        const score1: number = this.players.get(player1) as number;
-        const score2: number = this.players.get(player2) as number;
-        if (score1 === score2 && score1 === 0) return "LOVE ALL";
-        const highScore = Math.max(score1, score2);
-        if (highScore >= 4) {
-            const highScorePlayer = [...this.players.entries()].find(([_, score]) => score === highScore)?.[0];
-            if (Math.abs(score1 - score2) >= 2)
-                return highScorePlayer + " WINS";
-            else if (Math.abs(score1 - score2) === 1)
-                return "ADVANTAGE " + highScorePlayer;
-        }
-        if (highScore >= 3 && score1 === score2) {
-            return "DEUCE";
-        }
-        return POINTS[score1] + "," + POINTS[score2];
+        return this.isSameScore
+            ? this.isDeuce ? "DEUCE" : this.sameScore()
+            : this.isLookupScore ? this.lookupScore() : this.advantageScore();
+    }
+
+    private advantageScore() {
+        const highScorePlayer = this.highScorePlayer.name;
+        return this.isAdvantage ? ("ADVANTAGE " + highScorePlayer) : (highScorePlayer + " WINS");
+    }
+    private lookupScore() {
+        return POINTS[this.player1.score] + "," + POINTS[this.player2.score];
+    }
+
+    private get isLookupScore() {
+        return this.player1.score < 4 && this.player2.score < 4;
+    }
+
+    private get isAdvantage() {
+        return Math.abs(this.player1.score - this.player2.score)===1;
+    }
+
+    private sameScore() {
+        return POINTS[this.player1.score] + " ALL";
+    }
+
+    private get isDeuce() {
+        return this.player1.score > 2;
+    }
+
+    private get isSameScore() {
+        return this.player1.score === this.player2.score;
+    }
+
+    private findPlayer(name: string) {
+        return (name === this.player1.name)
+            ? this.player1 : this.player2;
+    }
+
+    private get highScorePlayer() {
+        return this.player1.score >= this.player2.score ? this.player1 : this.player2;
     }
 }

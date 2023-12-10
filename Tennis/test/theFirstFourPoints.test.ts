@@ -9,6 +9,14 @@ describe('The first four Points', () => {
         expect(tennis.getScore()).toBe('LOVE ALL');
     })
 
+    test("Given 1-2, when A win a point, then A's score becomes 15.", () => {
+        const tennis = new Tennis('A', 'B');
+        tennis.setScoreOfPlayer('A', 1);
+        tennis.setScoreOfPlayer('B', 2);
+        tennis.winPoint('A');
+        expect(tennis.getScore()).toBe('THIRTY ALL');
+    })
+
     test("Given A is at love, when A win a point, then A's score becomes 15.", () => {
         const tennis = new Tennis('A', 'B');
         tennis.winPoint('A');
